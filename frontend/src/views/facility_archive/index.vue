@@ -85,7 +85,6 @@ const meta = moduleMeta('facility_archive')
 const columns = ["档案编号", "设施名称", "设施类别", "所属区域", "竣工日期", "设计图纸", "承建企业", "档案状态"]
 const actions = ["提交归档", "更新档案", "作废档案"]
 const statuses = ["待归档", "已归档", "待更新", "已作废"]
-const stats = [{"label": "档案总数", "value": 0}, {"label": "待归档档案", "value": 0}, {"label": "待更新档案", "value": 0}]
 
 const rows = ref<EntryRow[]>([])
 const total = ref(0)
@@ -98,6 +97,12 @@ const statusSummary = computed(() =>
     count: rows.value.filter((row) => String(row.status) === status).length,
   })),
 )
+// 井盖确认更换后会在这里追加「待更新」档案，统计实时反映同步结果。
+const stats = computed(() => [
+  { label: "档案总数", value: rows.value.length },
+  { label: "待归档档案", value: rows.value.filter((row) => String(row.status) === '待归档').length },
+  { label: "待更新档案", value: rows.value.filter((row) => String(row.status) === '待更新').length },
+])
 
 function resetFilters() {
   filters.value = {}
